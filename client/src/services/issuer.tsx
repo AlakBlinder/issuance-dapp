@@ -65,10 +65,50 @@ export interface CredentialRequest {
     type: string;
     credentialSubject: {
         id: string;
-        balance: number;
+        name?: string;
+        email?: string;
+        balance?: number;
+        walletAddress?: string;
     };
     expiration: number;
 }
+
+export class GoogleCredentialRequest {
+    private credentialSchema: string = 'ipfs://QmPTH4svBrpsJgm8njs8LeVoKvNXJwbJgoHKS3HqAuSsSn';
+    private type: string = 'SocialCredential';
+    private id: string;
+    private name: string;
+    private email: string;
+    private walletAddress: string;
+    private expiration: number;
+
+    constructor(id: string, name: string, email: string, walletAddress: string, expiration?: number) {
+        if (!id) throw new Error('ID is required');
+        if (!name) throw new Error('Name is required');
+        if (!email) throw new Error('Email is required');
+        if (!walletAddress) throw new Error('Wallet address is required');
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.walletAddress = walletAddress;
+        this.expiration = expiration || 1746494466;
+    }
+
+    construct(): CredentialRequest {
+        return {
+            credentialSchema: this.credentialSchema,
+            type: this.type,
+            credentialSubject: {
+                id: this.id,
+                name: this.name,
+                email: this.email,
+                walletAddress: this.walletAddress,
+            },
+            expiration: this.expiration || Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 90,
+        };
+    }
+}
+
 export class CredentialBalanceRequest {
     private credentialSchema: string = 'ipfs://QmbgBjetG5V6DecQXTRrJ7s239b4aLydpjgB5Q6tiyZyUi';
     private type: string = 'BalanceCredential';
@@ -95,7 +135,6 @@ export class CredentialBalanceRequest {
     }
 }
 
-
 interface NewCredentialResponse {
     id: string;
 }
@@ -113,7 +152,6 @@ export async function requestIssueNewCredential(issuerDid: string, credentialReq
         throw error;
     }
 }
-
 
 export async function getCredentialOffer(issuerDid: string, subjectDid: string, claimId: string): Promise<any> {
     try {

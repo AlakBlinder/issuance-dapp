@@ -1,12 +1,15 @@
 import '../app/globals.css'
-import type { AppProps } from "next/app";
-import SelectedIssuerProvider from '@/providers/SelectedIssuerProvider';
+import { AppProps } from 'next/app';
+import { SelectedIssuerProvider } from '@/contexts/SelectedIssuerContext';
+import { SessionProvider } from "next-auth/react"
 
-function MyApp({Component, pageProps}: AppProps) {
+function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <SelectedIssuerProvider>
-      <Component {...pageProps} />
-    </SelectedIssuerProvider>
+    <SessionProvider session={pageProps.session}>
+      <SelectedIssuerProvider>
+        <Component {...pageProps} />
+      </SelectedIssuerProvider>
+    </SessionProvider>
   );
 }
 

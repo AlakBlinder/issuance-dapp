@@ -18,7 +18,14 @@ interface MetamaskWalletResponse {
 
 export async function selectMetamaskWallet(): Promise<MetamaskWalletResponse> {
     try {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        // Force wallet selection by using eth_requestAccounts with specific parameters
+        const accounts = await window.ethereum.request({
+            method: 'wallet_requestPermissions',
+            params: [{ eth_accounts: {} }]
+        }).then(() => window.ethereum.request({
+            method: 'eth_requestAccounts'
+        }));
+
         if (!accounts || !accounts.length) {
             throw new Error('No accounts found');
         }
