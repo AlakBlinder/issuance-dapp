@@ -15,13 +15,17 @@ const GoogleAuthPage = () => {
   const { data: session } = useSession();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [walletAddress, setWalletAddress] = useState<string>('');
   const { selectedIssuerContext } = useContext(SelectedIssuerContext);
 
   // Check for wallet connection
   useEffect(() => {
-    const savedWalletAddress = localStorage.getItem('metamaskWalletAddress');
-    if (!savedWalletAddress) {
-      router.push('/connect-wallet');
+    if (typeof window !== 'undefined') {  // Check if running in browser
+      const savedWalletAddress = localStorage.getItem('metamaskWalletAddress');
+      setWalletAddress(savedWalletAddress || '');
+      if (!savedWalletAddress) {
+        router.push('/connect-wallet');
+      }
     }
   }, [router]);
 
@@ -58,7 +62,7 @@ const GoogleAuthPage = () => {
               👤 User ID: {userID}
             </Typography>
             <Typography variant="body1" align="center" sx={{ wordBreak: 'break-all' }}>
-              💳 Wallet: {localStorage.getItem('metamaskWalletAddress')}
+              💳 Wallet: {walletAddress}
             </Typography>
           </Paper>
 

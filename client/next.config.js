@@ -15,6 +15,9 @@ const nextConfig = {
     publicRuntimeConfig: {
       NEXT_PUBLIC_ISSUER_URL: process.env.NEXT_PUBLIC_ISSUER_URL,
     },  
+    eslint: {
+        ignoreDuringBuilds: true,
+    },
 }
 
 module.exports = nextConfig

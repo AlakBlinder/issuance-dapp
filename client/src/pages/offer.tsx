@@ -14,9 +14,9 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 const App = () => {
     const router = useRouter();
     const routerQuery = router.query;
-
-    const [ credentialOffer, setCredentialOffer ] = useState('')
+    const [credentialOffer, setCredentialOffer] = useState('')
     const [error, setError] = useState<string | null>(null);
+    const [walletAddress, setWalletAddress] = useState<string>('');
 
     useEffect(() => {
         const fetchCredentialOffer = async () => {
@@ -33,6 +33,12 @@ const App = () => {
 
         fetchCredentialOffer()
     }, [routerQuery])
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setWalletAddress(localStorage.getItem('metamaskWalletAddress') || '');
+        }
+    }, []);
     
     const handleLogout = async () => {
         // Clear MetaMask address from localStorage
@@ -86,7 +92,7 @@ const App = () => {
                             ✉️ Email: {routerQuery.issuer}
                         </Typography>
                         <Typography variant="body1" align="center" sx={{ wordBreak: 'break-all' }}>
-                            💳 Wallet: {localStorage.getItem('metamaskWalletAddress')}
+                            💳 Wallet: {walletAddress}
                         </Typography>
                     </Paper>
 
