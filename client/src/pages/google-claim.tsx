@@ -19,10 +19,14 @@ const GoogleClaimPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { selectedIssuerContext } = useContext(SelectedIssuerContext);
   const [credentialRequest, setCredentialRequest] = useState<CredentialRequest | undefined>();
+  const [walletAddress, setWalletAddress] = useState<string>('');
 
   // Check for wallet connection and session
   useEffect(() => {
+    // Move localStorage access inside useEffect
     const savedWalletAddress = localStorage.getItem('metamaskWalletAddress');
+    setWalletAddress(savedWalletAddress || '');
+    
     if (!savedWalletAddress) {
       console.log('No wallet address or session found');
       router.push('/connect-wallet');
@@ -43,7 +47,7 @@ const GoogleClaimPage = () => {
         setError(`Failed to create credential request: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     }
-  }, [session, router, credentialRequest]);
+  }, [session, router, credentialRequest, userID]);
 
   const submitCredentialRequest = async () => {
     setIsLoading(true);
@@ -61,7 +65,7 @@ const GoogleClaimPage = () => {
         throw new Error('Failed to create credential');
       }
      
-      router.push(`/offer?claimId=${credentialInfo.id}&issuer=${selectedIssuerContext}`);
+      router.push(`/offer?claimId=${credentialInfo.id}&issuer=${selectedIssuerContext}&subject=${userID}`);
     } catch (error) {
       setError(`Credential request failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
@@ -91,7 +95,7 @@ const GoogleClaimPage = () => {
               ✉️ Email: {session?.user?.email}
             </Typography>
             <Typography variant="body1" align="center" sx={{ wordBreak: 'break-all' }}>
-              💳 Wallet: {localStorage.getItem('metamaskWalletAddress')}
+              💳 Wallet: {walletAddress}
             </Typography>
           </Paper>
 
