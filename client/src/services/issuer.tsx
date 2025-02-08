@@ -22,17 +22,30 @@ interface AuthQRCodeResponse {
     sessionId: string;
 }
 
+/**
+ * Generates a QR code for authentication with a specified issuer
+ * @param issuer - The DID or identifier of the issuer to authenticate with
+ * @returns Promise containing the QR code data and session ID for tracking auth status
+ */
 export async function produceAuthQRCode(issuer: string): Promise<AuthQRCodeResponse> {
     try {
+        // Validate that issuer parameter is provided
         if (!issuer) {
             throw new Error('Issuer is not defined');
         }
+
+        // Construct the authentication request URL
         const url = new URL(`${OnchainIssuerNodeHost}/api/v1/requests/auth`);
+        // Add issuer as a query parameter
         url.search = new URLSearchParams({ issuer: issuer }).toString();
+
+        // Make GET request to generate auth QR code
         const response = await axios.get<any>(url.toString());
+
+        // Return both the QR code data and the session ID from headers
         return {
-            data: response.data,
-            sessionId: response.headers['x-id'],
+            data: response.data,      // Contains QR code data
+            sessionId: response.headers['x-id'], // Unique session ID for tracking auth status
         };
     } catch (error) {
         throw error;

@@ -29,15 +29,25 @@ const GoogleAuthPage = () => {
     }
   }, [router]);
 
+  /**
+   * Handles the Google sign-in process when the user clicks the sign-in button
+   * Redirects to the google-claim page after successful authentication
+   */
   const handleGoogleSignIn = async () => {
+    // Show loading spinner while authentication is in progress
     setIsLoading(true);
     try {
+      // Initiate Google OAuth flow using NextAuth's signIn method
+      // redirect: true - Automatically redirect to Google's consent screen
+      // callbackUrl - Where to redirect after successful authentication
       await signIn('google', { 
         redirect: true,
-        callbackUrl: `/google-claim?userID=${userID}`  // This will be the final step
+        callbackUrl: `/google-claim?userID=${userID}`  // Pass userID to next step
       });
     } catch (error) {
+      // Handle any authentication errors and display them to the user
       setError(`Google sign-in failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      // Hide loading spinner on error
       setIsLoading(false);
     }
   };

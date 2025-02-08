@@ -18,17 +18,27 @@ const ConnectWalletPage = () => {
   const { selectedIssuerContext } = useContext(SelectedIssuerContext);
 
   const connectMetamask = async () => {
+    // Show loading spinner while connecting
     setIsLoading(true);
     try {
+      // Check if MetaMask is installed in the browser
       if (typeof window.ethereum === 'undefined') {
         throw new Error('MetaMask is not installed');
       }
+
+      // Attempt to connect to MetaMask and get the wallet address
       const wallet = await selectMetamaskWallet();
+      
+      // Update state with the connected wallet address
       setMetamaskWalletAddress(wallet.address);
+      
+      // Store wallet address in localStorage for persistence
       localStorage.setItem('metamaskWalletAddress', wallet.address);
     } catch (error) {
+      // Handle any errors during connection and display user-friendly message
       setError(`Wallet connection failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
+    // Hide loading spinner after connection attempt (whether successful or not)
     setIsLoading(false);
   };
 

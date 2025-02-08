@@ -16,6 +16,14 @@ interface MetamaskWalletResponse {
     address: string;
 }
 
+/**
+ * Prompts user to select a MetaMask wallet by triggering the MetaMask popup.
+ * First requests wallet permissions, then requests account access.
+ * This two-step process ensures the wallet selection dialog is shown even if
+ * the user has previously connected to the site.
+ * @returns Promise containing the selected wallet address
+ * @throws Error if user rejects the request or if no accounts are found
+ */
 export async function selectMetamaskWallet(): Promise<MetamaskWalletResponse> {
     try {
         // Force wallet selection by using eth_requestAccounts with specific parameters
